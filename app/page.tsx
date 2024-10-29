@@ -1,101 +1,120 @@
-import Image from "next/image";
+"use client";
+
+import { useRef, useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [lists, setLists] = useState([
+    { name: "Apple", type: "Fruit" },
+    { name: "Broccoli", type: "Vegetables" },
+    { name: "Mushroom", type: "Vegetables" },
+    { name: "Banana", type: "Fruit" },
+    { name: "Tomato", type: "Vegetables" },
+    { name: "Orange", type: "Fruit" },
+    { name: "Mango", type: "Fruit" },
+    { name: "Pineapple", type: "Fruit" },
+    { name: "Cucumber", type: "Vegetables" },
+    { name: "Watermelon", type: "Fruit" },
+    { name: "Carrot", type: "Vegetables" },
+  ]);
+  const [fruits, setFruits] = useState<{ name: string; type: string }[]>([]);
+  const [vegetables, setVegetables] = useState<{ name: string; type: string }[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // กำหนดตัวแปรเพื่อเก็บ timeoutId ของแต่ละ item
+  const timeoutIds = useRef<{[key: string] : NodeJS.Timeout}>({});
+
+  // เป็นฟังก์ชันที่ใช้ในการเลือก item จาก lists แล้วเพิ่มเข้าไปใน list(fruit, vagetable) ที่ต้องการ และลบออกจาก lists
+  const moveItemToList = (item: any, listSetter: Function, removeFromList: Function, delay = 5000) => {
+    // เพิ่ม item ที่ถูกเลือกเข้าไปใน state ของ list(fruit, vegetable)
+    listSetter((prevList: any) => [...prevList, item]);
+
+    // ลบ item ที่ถูกเลือกออกจาก lists
+    setLists((prevLists) => prevLists.filter((list) => list.name !== item.name));
+
+    // ใช้ setTimeout เพื่อเพิ่ม item ที่ถูกเลือกเข้าไปใน list(fruit, vegetable) ที่ต้องการ และลบออกจาก lists หลังจากเวลา delay ที่กำหนด
+    const timeoutId = setTimeout(() => {
+      removeFromList(item);
+      addLists(item);
+    }, delay);
+
+    // ใช้เพื่อเก็บ timeoutId ของแต่ละ item เพื่อใช้ในการ clear timeout ในกรณีที่ item ถูกเลือกอีกครั้ง
+    timeoutIds.current[item.name] = timeoutId;
+  };
+
+  // func ที่ใช้ในการเพิ่ม item ลงใน list(fruit, vegetable)
+  const addItem = (item: any) => {
+    if (item.type === "Fruit") {
+      moveItemToList(item, setFruits, (item: any) =>
+        setFruits((prevFruits) => prevFruits.filter((fruit) => fruit.name !== item.name))
+      );
+    } else {
+      moveItemToList(item, setVegetables, (item: any) =>
+        setVegetables((prevVegetables) => prevVegetables.filter((veg) => veg.name !== item.name))
+      );
+    }
+  };
+
+  // func ที่ใช้ในการลบ item ออกจาก list(fruit, vegetable)
+  const setList = (item: any) => {
+    // clear timeout ของ item ที่ถูกเลือกอีกครั้ง
+    if(timeoutIds.current[item.name]) {
+      clearTimeout(timeoutIds.current[item.name]);
+      delete timeoutIds.current[item.name];
+    }
+
+    // ลบ item ที่ถูกเลือกออกจาก list(fruit, vegetable) ที่เก็บอยู่
+    if (item.type === "Fruit") {
+      setFruits((prevFruits) => prevFruits.filter((fruit) => fruit.name !== item.name));
+    } else {
+      setVegetables((prevVegetables) => prevVegetables.filter((veg) => veg.name !== item.name));
+    }
+
+    // เพิ่ม item ที่ถูกเลือกอีกครั้งเข้าไปใน lists
+    addLists(item);
+  };
+
+  const addLists = (item: any) => {
+    setLists((prevLists) => [...prevLists, item]);
+  }
+
+  return (
+    <div className="h-[780px] flex  justify-center mt-12">
+      <div className="grid grid-cols-3 w-[80%] gap-4">
+        <div className="col-span-1 space-y-3">
+          {lists.map((list) => (
+            <button
+              key={list.name}
+              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50"
+              onClick={() => addItem(list)}
+            >
+              {list.name}
+            </button>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="col-span-1 border">
+          <div className="bg-zinc-200 h-[60px] flex items-center justify-center">Fruits</div>
+          {fruits.map((fruit) => (
+            <button
+              key={fruit.name}
+              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50"
+              onClick={() => setList(fruit)}
+            >
+              {fruit.name}
+            </button>
+          ))}
+        </div>
+        <div className="col-span-1 border">
+          <div className="bg-zinc-200 h-[60px] flex items-center justify-center">Vegetables</div>
+          {vegetables.map((veg) => (
+            <button
+              key={veg.name}
+              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50"
+              onClick={() => setList(veg)}
+            >
+              {veg.name}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
