@@ -3,7 +3,7 @@ name: Deploy Next.js to Plesk
 on:
   push:
     branches:
-      - main # หรือ branch ที่คุณต้องการ deploy
+      - main
 
 jobs:
   build-and-deploy:
