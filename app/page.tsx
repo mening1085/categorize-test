@@ -90,9 +90,10 @@ export default function Home() {
             </button>
           ))}
         </div>
-        <div className="col-span-1 border">
+        <div className="col-span-1 border space-y-3">
           <div className="bg-zinc-200 h-[60px] flex items-center justify-center">Fruits</div>
-          {fruits.map((fruit) => (
+         <div className="space-y-3 px-3">
+           {fruits.map((fruit) => (
             <button
               key={fruit.name}
               className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50"
@@ -101,18 +102,21 @@ export default function Home() {
               {fruit.name}
             </button>
           ))}
+         </div>
         </div>
-        <div className="col-span-1 border">
+        <div className="col-span-1 border space-y-3">
           <div className="bg-zinc-200 h-[60px] flex items-center justify-center">Vegetables</div>
+          <div className="space-y-3 px-3">
           {vegetables.map((veg) => (
             <button
               key={veg.name}
-              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50"
+              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50  px-3"
               onClick={() => setList(veg)}
             >
               {veg.name}
             </button>
           ))}
+          </div>
         </div>
       </div>
     </div>
