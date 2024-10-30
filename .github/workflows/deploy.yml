@@ -24,10 +24,11 @@ jobs:
       - name: Build Next.js
         run: npm run build
 
-      - name: Deploy to Plesk
-        env:
-          HOST: ${{ secrets.PLESK_HOST }}
-          USERNAME: ${{ secrets.PLESK_USERNAME }}
-          PASSWORD: ${{ secrets.PLESK_PASSWORD }}
-        run: |
-          sshpass -p $PASSWORD scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \ ./out/* \ $USERNAME@$HOST:/categorize-test.xmmeenn.com/
+      - name: Deploy to Plesk via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.PLESK_HOST }}
+          username: ${{ secrets.PLESK_USERNAME }}
+          password: ${{ secrets.PLESK_PASSWORD }}
+          local-dir: ./out
+          server-dir: /categorize-test.xmmeenn.com/
