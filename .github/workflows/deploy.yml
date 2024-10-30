@@ -30,5 +30,4 @@ jobs:
           USERNAME: ${{ secrets.PLESK_USERNAME }}
           PASSWORD: ${{ secrets.PLESK_PASSWORD }}
         run: |
-          rsync -avz --delete -e "sshpass -p $PASSWORD ssh -o StrictHostKeyChecking=no" \
-          ./out/ $USERNAME@$HOST:/categorize-test.xmmeenn.com/
+          sshpass -p $PASSWORD scp -r -o StrictHostKeyChecking=no ./out/* \ $USERNAME@$HOST:/categorize-test.xmmeenn.com/
