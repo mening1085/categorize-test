@@ -31,4 +31,9 @@ jobs:
           username: ${{ secrets.PLESK_USERNAME }}
           password: ${{ secrets.PLESK_PASSWORD }}
           local-dir: ./out/
-          server-dir: /categorize-test.xmmeenn.com/
+          server-dir: ./categorize-test.xmmeenn.com/
+          protocol: ftps
+          port: 21
+          passive: true
+          transfer-options: --concurrency=2
+          timeout: 60000
