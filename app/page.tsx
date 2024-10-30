@@ -96,7 +96,7 @@ export default function Home() {
            {fruits.map((fruit) => (
             <button
               key={fruit.name}
-              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50"
+              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50 bg-green-100"
               onClick={() => setList(fruit)}
             >
               {fruit.name}
@@ -110,7 +110,7 @@ export default function Home() {
           {vegetables.map((veg) => (
             <button
               key={veg.name}
-              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50  px-3"
+              className="border h-[60px] rounded-md w-full shadow-md hover:bg-gray-50  px-3 bg-yellow-100"
               onClick={() => setList(veg)}
             >
               {veg.name}
